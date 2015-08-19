@@ -59,16 +59,26 @@ $tituloEx='Quizz 1';
 			}
 			
 			function calificarSub2(){
-				var rTextos=[];
-				for(var j=11;j<=26;j++){					
+				var suma=[];
+				var rTextos=["is","are","are","is","is","are","are","are","is","is","is","am","is","is","are","am"];
+				for(var j=11;j<=26;j++){
 					var valorT=document.getElementById('sel'+i).value;
-					if(valorT==$rEsperada){
+					if(valorT==rTextos[i-11]){
+						alert("El valor de la respuesta es "+valorT+" y el del arreglo es: "+rTextos[i-11]);
 						valor=1;
 					}
 					else{
 						valor=0;
 					}
+					//alert("El valor suma["+i+"] es de "+valor);
+					suma[i]=parseInt(valor);
 				}
+				var calificacion=null;
+				for(var h=1;h<suma.length;h++){
+					calificacion+=suma[h];
+				}				
+				alert("Tu calificación es de "+calificacion+ " sobre 10");
+				//alert("Los valores obtenidos son: "+suma);
 			}
 			
 			function calificar(){
@@ -213,19 +223,19 @@ $tituloEx='Quizz 1';
 				2. Call me later, please. I <?php opciones(2,1)?> at school now.<br/><br/><br/>
 				3. They <?php opciones(3,3)?>not Japanese.<br/><br/><br/>
 				4. You <?php opciones(4,3)?> Penny's friend, right?<br/><br/><br/>
-				5. My name <?php opciones(5,3)?> not Akira.<br/><br/><br/>
+				5. My name <?php opciones(5,2)?> not Akira.<br/><br/><br/>
 				6. We <?php opciones(6,3)?> from Salamanca, Spain.<br/><br/><br/>
-				7. That <?php opciones(7,3)?> incredible!<br/><br/><br/>
-				8. I <?php opciones(8,3)?> fine, thank you.<br/><br/><br/>
+				7. That <?php opciones(7,2)?> incredible!<br/><br/><br/>
+				8. I <?php opciones(8,1)?> fine, thank you.<br/><br/><br/>
 				9. Clara and Steve <?php opciones(9,3)?> my best friends.<br/><br/><br/>
-				10. He <?php opciones(10,3)?> an English teacher in my school.<br/><br/><br/><br/>
+				10. He <?php opciones(10,2)?> an English teacher in my school.<br/><br/><br/><br/>
 			</p>
 			<p style="line-height:200%; margin-left: 2%;">
 				<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Complete the text with the correct form of the verb to be  (am, is or are).</b></font><br/><br/>
 				Peter <?php texto(11)?> from New York, but Pam and her brother Joe <?php texto(12)?> from Los Angeles, California. New  York  and  California <?php texto(13)?> cities  in  the  United States.  Berlin <?php texto(14)?> a  city in  Germany. Sandra <?php texto(15)?> from  Berlin.  Joe and  Peter <?php texto(16)?> her  friends.  They <?php texto(17)?> in  the  same  class. Sandra's parents <?php texto(18)?> on a trip to Ireland to  visit her  aunt Danielle.  She <?php texto(19)?> a  nice and interesting woman.  Peter calls Sandra  on  the  phone  and  says:  "My mother <?php texto(20)?> in the hospital. It  <?php texto(21)?>  nothing  serious. I <?php texto(22)?> at  home  with  my  grandmother." Sandra  says: "What time <?php texto(23)?> it? It <?php texto(24)?> 3am. "<?php texto(25)?> n't you tired?" Peter answers: "No, I <?php texto(26)?> not."
 				
 			</p>
-			<button style='margin-left:35%;' class='btn' onclick='vRespuestas()'>Calificar examen</button>
+			<button style='margin-left:35%;' class='btn' onclick='calificarSub2()'>Calificar examen</button>
 			<br/>
 			<br/>		
 		</div><!-- container -->
