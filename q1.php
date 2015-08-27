@@ -22,6 +22,12 @@ $tituloEx='Quizz 1';
 		<link rel="stylesheet" href="css/hugixBS.css" type="text/css" media="screen" /><!-- Mi 2a hoja de estilos-->
 		
 		<script>
+			function habilita(){
+				for(var i=1;i<=26;i++){
+					document.getElementById('sel'+i).disabled=false;
+				}
+			}
+		
 			function dirCGL()
 			{
 				var direccion="http://www.cgl.unam.mx";
@@ -34,10 +40,10 @@ $tituloEx='Quizz 1';
 				location.href=direccion;
 			}
 			
-			function calificarSub1(){
+			function Califica(){
 				var suma=[];
 				for(var i=1;i<=10;i++){
-					//document.getElementById('sel'+i).disabled=true;					
+					document.getElementById('sel'+i).disabled=true;
 					var valor=document.getElementById('sel'+i).value;
 					if(valor=='xh'){
 						valor=1;						
@@ -47,22 +53,21 @@ $tituloEx='Quizz 1';
 					}
 					//valor=parseInt(valor);
 					//alert("El tipo de valor es "+typeof(valor));
-					alert("El valor suma["+i+"] es de "+valor);
+					//alert("El valor suma["+i+"] es de "+valor);
 					suma[i]=parseInt(valor);					
 				}
 				var calificacion=null;
 				for(var h=1;h<suma.length;h++){
 					calificacion+=suma[h];
 				}				
-				alert("Tu calificación es de "+calificacion+ " sobre 10");
+				alert("Tu calificación en la primera parte es de "+[(calificacion/10)*10]);
 				//alert("Los valores obtenidos son: "+suma);
-			}
-			
-			function calificarSub2(){
+				
 				var sumaT=[];
 				var rTextos=["is","are","are","is","is","are","are","are","is","is","is","am","is","is","are","am"];
 				for(var j=11;j<=26;j++){
 					//alert ("Valor cadena "+(j-11)+" es : "+rTextos[j-11]);
+					document.getElementById('sel'+j).disabled=true;
 					var valorT=document.getElementById('sel'+j).value;
 					if(valorT==rTextos[j-11]){
 						//alert("El valor de la respuesta es "+valorT+" y el del arreglo es: "+rTextos[j-11]);
@@ -71,19 +76,23 @@ $tituloEx='Quizz 1';
 					else{
 						valor=0;
 					}
-					//alert("El valor suma["+i+"] es de "+valor);
 					sumaT[j-11]=parseInt(valor);
 				}
-				var calificacion=null;
+				var calificacionT=null;
 				for(var h=1;h<sumaT.length;h++){
-					calificacion+=sumaT[h];
+					calificacionT+=sumaT[h];
 				}				
-				alert("Tu calificación es de "+calificacion+ " sobre 10");
-				alert("Los valores obtenidos son: "+sumaT);
+				alert("Tu calificación en la segunda parte es de "+[(calificacionT/16)*10]);
+				//alert("Los valores obtenidos son: "+sumaT);
+				var c_Total=calificacion+calificacionT;
+				alert("Tu calificación total es: "+c_Total+ " sobre 26, o bien, "+[(c_Total/26)*10]);
+				document.getElementById('Calificacion').innerHTML=c_Total;
+				$("#quizz").submit();
 			}
 			
-			function vRespuestas(){
-				var nulo=0;
+				$(document).ready(function(){
+				$("#vRespuesta").click(function (){
+					var nulo=0;
 				var faltantes=[];
 				for(var i=1;i<=26;i++){
 					var valor=document.getElementById('sel'+i).value;
@@ -110,25 +119,33 @@ $tituloEx='Quizz 1';
 				}
 				else{
 					alert("Ahora se calificará el examen, ya no puedes cambiar tus respuestas");
-					calificar();
+					Califica();
 				}
 				//alert("El valor que obtuvo nulo fue: "+nulo);
 				return false;
+				});
+			});
+			
+			function aMinuscula(campo){				
+				var x = document.getElementById(''+campo+'');
+				x.value = x.value.toLowerCase();
+				var opciones=document.getElementById(''+campo+'').value;
+				if(x.value.length==2  ){
+					switch(opciones){
+							case "is":
+							case "ar":
+							case "am"://alert ("Bien, puedes continuar");
+							break;
+							default:
+							alert("This is not a valid answer, remember use \nthe correct form of the verb to be");	
+							x.value="";
+					}
+				}
+				if(x.value.length==3 && x.value!="are"){
+					alert("Esta no es una respuesta válida");					
+					x.value="";
+				}
 			}
-			
-			
-			
-			/*function cambia(pregunta,correcta){				
-					var original=document.getElementById(pregunta+"op"+correcta+"").value;
-					var original=document.getElementById(pregunta+"op"+correcta+"").innerHTML;
-					alert ("Original0 "+original);
-					alert ("Original "+original);
-					document.getElementById(pregunta+"op"+correcta+"").value=1;
-					var original=document.getElementById(pregunta+"op"+correcta+"").innerHTML=1;
-					alert ("Despues "+original);
-					alert ("DEspues Original0 "+original0);
-					//alert("Valor pregunta: "+pregunta+", valor correcta: "+correcta);			
-			}*/
 			
 		</script>
 		<?php
@@ -143,11 +160,11 @@ $tituloEx='Quizz 1';
 			//echo"<script>cambia($num_pregunta,$op_correcta);</script>";
 		}
 		function texto($num_pregunta){
-			echo"<input type='text' id='sel".$num_pregunta."' size='5' maxlength='3' style='line-height: 80%;'></input>";
+			echo"<input type='text' id='sel".$num_pregunta."' onkeyup='aMinuscula(\"sel$num_pregunta\")' size='5' maxlength='3' style='line-height: 80%;' >";
 		}
 		?>
 	</head>
-	<body style="margin-top: 0%; font-size:1.4em">
+	<body style="margin-top: 0%; font-size:1.4em" onload='habilita()'>
 		<style>
 			p{
 				color: #FFF;
@@ -190,29 +207,31 @@ $tituloEx='Quizz 1';
 
 		<br/>
 		<div class="container container-fluid">	
-			
-			<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Chose the correct form of the verb to be: am, is or are</b></font><br/><br/>			
-			<p>
-				<!--Las opciones de respuestas son: 1->am,2->is,3->are -->
-				1. It <?php opciones(1,2)?> really hot today!<br/><br/><br/>
-				2. Call me later, please. I <?php opciones(2,1)?> at school now.<br/><br/><br/>
-				3. They <?php opciones(3,3)?>not Japanese.<br/><br/><br/>
-				4. You <?php opciones(4,3)?> Penny's friend, right?<br/><br/><br/>
-				5. My name <?php opciones(5,2)?> not Akira.<br/><br/><br/>
-				6. We <?php opciones(6,3)?> from Salamanca, Spain.<br/><br/><br/>
-				7. That <?php opciones(7,2)?> incredible!<br/><br/><br/>
-				8. I <?php opciones(8,1)?> fine, thank you.<br/><br/><br/>
-				9. Clara and Steve <?php opciones(9,3)?> my best friends.<br/><br/><br/>
-				10. He <?php opciones(10,2)?> an English teacher in my school.<br/><br/><br/><br/>
-			</p>
-			<p style="line-height:200%; margin-left: 2%;">
-				<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Complete the text with the correct form of the verb to be  (am, is or are).</b></font><br/><br/>
-				Peter <?php texto(11)?> from New York, but Pam and her brother Joe <?php texto(12)?> from Los Angeles, California. New  York  and  California <?php texto(13)?> cities  in  the  United States.  Berlin <?php texto(14)?> a  city in  Germany. Sandra <?php texto(15)?> from  Berlin.  Joe and  Peter <?php texto(16)?> her  friends.  They <?php texto(17)?> in  the  same  class. Sandra's parents <?php texto(18)?> on a trip to Ireland to  visit her  aunt Danielle.  She <?php texto(19)?> a  nice and interesting woman.  Peter calls Sandra  on  the  phone  and  says:  "My mother <?php texto(20)?> in the hospital. It  <?php texto(21)?>  nothing  serious. I <?php texto(22)?> at  home  with  my  grandmother." Sandra  says: "What time <?php texto(23)?> it? It <?php texto(24)?> 3am. "<?php texto(25)?> n't you tired?" Peter answers: "No, I <?php texto(26)?> not."
-				
-			</p>
-			<button style='margin-left:35%;' class='btn' onclick='calificarSub1()'>Calificar examen</button>
-			<br/>
-			<br/>		
+			<form action="rQ.php" method="POST" id="quizz">
+				<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Chose the correct form of the verb to be: am, is or are</b></font><br/><br/>			
+				<p>
+					<!--Las opciones de respuestas son: 1->am,2->is,3->are -->
+					1. It <?php opciones(1,2)?> really hot today!<br/><br/><br/>
+					2. Call me later, please. I <?php opciones(2,1)?> at school now.<br/><br/><br/>
+					3. They <?php opciones(3,3)?>not Japanese.<br/><br/><br/>
+					4. You <?php opciones(4,3)?> Penny's friend, right?<br/><br/><br/>
+					5. My name <?php opciones(5,2)?> not Akira.<br/><br/><br/>
+					6. We <?php opciones(6,3)?> from Salamanca, Spain.<br/><br/><br/>
+					7. That <?php opciones(7,2)?> incredible!<br/><br/><br/>
+					8. I <?php opciones(8,1)?> fine, thank you.<br/><br/><br/>
+					9. Clara and Steve <?php opciones(9,3)?> my best friends.<br/><br/><br/>
+					10. He <?php opciones(10,2)?> an English teacher in my school.<br/><br/><br/><br/>
+				</p>
+				<p style="line-height:200%; margin-left: 2%;">
+					<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Complete the text with the correct form of the verb to be  (am, is or are).</b></font><br/><br/>
+					Peter <?php texto(11)?> from New York, but Pam and her brother Joe <?php texto(12)?> from Los Angeles, California. New  York  and  California <?php texto(13)?> cities  in  the  United States.  Berlin <?php texto(14)?> a  city in  Germany. Sandra <?php texto(15)?> from  Berlin.  Joe and  Peter <?php texto(16)?> her  friends.  They <?php texto(17)?> in  the  same  class. Sandra's parents <?php texto(18)?> on a trip to Ireland to  visit her  aunt Danielle.  She <?php texto(19)?> a  nice and interesting woman.  Peter calls Sandra  on  the  phone  and  says:  "My mother <?php texto(20)?> in the hospital. It  <?php texto(21)?>  nothing  serious. I <?php texto(22)?> at  home  with  my  grandmother." Sandra  says: "What time <?php texto(23)?> it? It <?php texto(24)?> 3am. "<?php texto(25)?> n't you tired?" Peter answers: "No, I <?php texto(26)?> not."
+					
+				</p>
+				<input type=button style='margin-left:35%;' class='btn' id='vRespuesta' value='Calificar examen'>
+				<input type='hidden' id='Calificacion' name='Calificacion'>
+				<br/>
+				<br/>	
+				</form>
 		</div><!-- container -->
 		<br/>
 			<br/>
