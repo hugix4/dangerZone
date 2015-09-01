@@ -1,10 +1,16 @@
 <!doctype html>
 <?php
-//include('cnxh.php');
-//$conexion=new conexion();
-//$conexion->conectar();
-//$nombreBD='pd2015';
+require('secPdLic.php');
+include('cnxh.php');
+require('fxPreguntas.php');
+$funciones=new fxpreguntas();
+$conexion=new conexion();
+$conexion->conectar();
+$nombreBD='pdlic2015';
 $tituloEx='Quizz 1';
+$nPreguntas=26;
+$nQuizz=1;
+$Cuenta=$_SESSION["Cuenta"];
 //$paginaSig='contPd.php';
 //$mismaPag='pEC.html';
 //$longitudUsr=9;
@@ -86,7 +92,8 @@ $tituloEx='Quizz 1';
 				//alert("Los valores obtenidos son: "+sumaT);
 				var c_Total=calificacion+calificacionT;
 				alert("Tu calificación total es: "+c_Total+ " sobre 26, o bien, "+[(c_Total/26)*10]);
-				document.getElementById('Calificacion').innerHTML=c_Total;
+				document.getElementById('Calificacion').value=c_Total;
+				//alert("Ya se mandó la calificación, la cual debe ser: "+c_Total);				
 				$("#quizz").submit();
 			}
 			
@@ -124,6 +131,20 @@ $tituloEx='Quizz 1';
 				//alert("El valor que obtuvo nulo fue: "+nulo);
 				return false;
 				});
+				
+				$("#contestaT").click(function (){
+					//alert("Entró al contestaT");
+					for(var i=1;i<=10;i++){
+						var idSel="sel"+i;
+						document.getElementById(""+idSel).selectedIndex="2";
+						//alert("Ya seleccionó el index 2");
+					}
+					for(var i=11;i<=26;i++){
+						document.getElementById('sel'+i).value="are";
+					}
+				});
+				
+				
 			});
 			
 			function aMinuscula(campo){				
@@ -142,7 +163,7 @@ $tituloEx='Quizz 1';
 					}
 				}
 				if(x.value.length==3 && x.value!="are"){
-					alert("Esta no es una respuesta válida");					
+					alert("This is not a valid answer, remember use \nthe correct form of the verb to be");
 					x.value="";
 				}
 			}
@@ -207,7 +228,12 @@ $tituloEx='Quizz 1';
 
 		<br/>
 		<div class="container container-fluid">	
-			<form action="rQ.php" method="POST" id="quizz">
+			<?php
+			$calificacionQ=$funciones->consultaUnica("SELECT q$nQuizz FROM $nombreBD Where Cuenta='$Cuenta'");
+			if($calificacionQ==0){
+				//echo"La calificacion del quizz fue $calificacionQ es 0";
+			?>
+			<form action="quizz.php" method="POST" id="quizz">
 				<font style="color:#CB9D01; font-size:18px; text-align:center;"><b>Chose the correct form of the verb to be: am, is or are</b></font><br/><br/>			
 				<p>
 					<!--Las opciones de respuestas son: 1->am,2->is,3->are -->
@@ -227,11 +253,24 @@ $tituloEx='Quizz 1';
 					Peter <?php texto(11)?> from New York, but Pam and her brother Joe <?php texto(12)?> from Los Angeles, California. New  York  and  California <?php texto(13)?> cities  in  the  United States.  Berlin <?php texto(14)?> a  city in  Germany. Sandra <?php texto(15)?> from  Berlin.  Joe and  Peter <?php texto(16)?> her  friends.  They <?php texto(17)?> in  the  same  class. Sandra's parents <?php texto(18)?> on a trip to Ireland to  visit her  aunt Danielle.  She <?php texto(19)?> a  nice and interesting woman.  Peter calls Sandra  on  the  phone  and  says:  "My mother <?php texto(20)?> in the hospital. It  <?php texto(21)?>  nothing  serious. I <?php texto(22)?> at  home  with  my  grandmother." Sandra  says: "What time <?php texto(23)?> it? It <?php texto(24)?> 3am. "<?php texto(25)?> n't you tired?" Peter answers: "No, I <?php texto(26)?> not."
 					
 				</p>
-				<input type=button style='margin-left:35%;' class='btn' id='vRespuesta' value='Calificar examen'>
-				<input type='hidden' id='Calificacion' name='Calificacion'>
+				<input type=button style='margin-left:35%;' class='btn' id='vRespuesta' value='Calificar examen'>				
+				<input type=button style='margin-left:35%;' class='btn' id='contestaT' value='Contestar todo bien'>
+				<input type='hidden' id='Calificacion' name='Calificacion' value='nulo'>
+				<input type='hidden' id='nPreguntas' name='nPreguntas' value='<?php echo$nPreguntas;?>'>
+				<input type='hidden' id='nQuizz' name='nQuizz' value='<?php echo $nQuizz;?>'>
 				<br/>
 				<br/>	
 				</form>
+			<?php }
+			else{
+				echo"<br/><br/>You have already answered this Quizz, please try another one<br/><br/>";
+			}?>
+			<br/>
+			<br/>
+			<u><a href='paqtlic.php'> Regresar</a></u>
+			<br/>
+			<br/>
+			<u><a href='salirPdLic.php'> Cerrar sesión </a></u>
 		</div><!-- container -->
 		<br/>
 			<br/>
